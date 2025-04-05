@@ -71,4 +71,4 @@ Depois, acesse: [http://localhost:3000](http://localhost:3000)
 
 ## 👨‍💻 Autor
 
-Desenvolvido com 💙 por [Seu Nome]
+Desenvolvido com 💙 por [Michael XG]
