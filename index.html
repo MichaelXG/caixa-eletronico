@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simulador de Caixa Eletrônico</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg-dark: #121212;
+      --bg-light: #f0f0f0;
+      --card-dark: #1f1f1f;
+      --card-light: #ffffff;
+      --primary: #00bfff;
+      --accent: #0099cc;
+      --text-light: #fff;
+      --text-dark: #222;
+      --gray: #ccc;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    body.light-mode {
+      background: var(--bg-light);
+      color: var(--text-dark);
+    }
+
+    .container {
+      background: var(--card-dark);
+      color: inherit;
+      padding: 30px 20px 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      transition: background 0.3s;
+    }
+
+    body.light-mode .container {
+      background: var(--card-light);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .reset-btn, .home-btn, .toggle-btn {
+      flex: 1;
+      background: #292929;
+      color: var(--gray);
+      border: 1px solid #444;
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    body.light-mode .reset-btn,
+    body.light-mode .home-btn,
+    body.light-mode .toggle-btn {
+      background: #e1e1e1;
+      border: 1px solid #ccc;
+      color: #333;
+    }
+
+    .reset-btn:hover, .home-btn:hover, .toggle-btn:hover {
+      background-color: var(--accent);
+      color: #fff;
+    }
+
+    label {
+      margin-top: 16px;
+      font-size: 15px;
+      display: block;
+    }
+
+    select, input[type="number"], button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      box-sizing: border-box;
+      transition: 0.2s;
+    }
+
+    select, input[type="number"] {
+      background: #2c2c2c;
+      color: #fff;
+      border: 1px solid #444;
+    }
+
+    body.light-mode select,
+    body.light-mode input[type="number"] {
+      background: #fff;
+      color: #000;
+      border: 1px solid #bbb;
+    }
+
+    select:focus, input[type="number"]:focus {
+      border-color: var(--primary);
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: var(--accent);
+    }
+
+    #resultado {
+      margin-top: 20px;
+      padding: 15px;
+      font-weight: bold;
+      border-radius: 8px;
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      position: relative;
+    }
+
+    .light-mode #resultado {
+      background: #f6f6f6;
+      border: 1px solid #ccc;
+    }
+
+    .eye {
+      position: absolute;
+      right: 10px;
+      top: 15px;
+      cursor: pointer;
+      font-size: 16px;
+      user-select: none;
+      color: var(--primary);
+    }
+
+    .error { color: #ff4d4d; }
+    .success { color: #00ffcc; }
+
+    .history {
+      margin-top: 30px;
+      font-size: 13px;
+      max-height: 200px;
+      overflow-y: auto;
+      border-top: 1px solid #333;
+      padding-top: 10px;
+    }
+
+    .light-mode .history {
+      border-top: 1px solid #ccc;
+    }
+
+    .history p {
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div class="container">
+    <div class="btn-group">
+      <button class="home-btn" onclick="alert('🔙 Menu inicial')"><i class="fas fa-home"></i></button>
+      <button class="reset-btn" onclick="resetarCaixa()"><i class="fas fa-rotate-right"></i></button>
+      <button class="toggle-btn" onclick="alternarModo()"><i class="fas fa-moon"></i></button>
+    </div>
+
+    <h1>Simulador de Caixa</h1>
+
+    <label for="operacao">Operação:</label>
+    <select id="operacao" onchange="atualizarInput()">
+      <option value="saldo">Consultar Saldo</option>
+      <option value="sacar">Sacar</option>
+      <option value="depositar">Depositar</option>
+    </select>
+
+    <label for="valor">Valor (R$):</label>
+    <input type="number" id="valor" placeholder="Digite o valor" disabled />
+
+    <button onclick="realizarOperacao()">Realizar</button>
+
+    <p id="resultado">
+      Resultado da operação aparecerá aqui.
+      <span class="eye" onclick="toggleSaldo()">👁️</span>
+    </p>
+
+    <div class="history" id="historico"></div>
+  </div>
+
+  <script>
+    let saldo = parseFloat(localStorage.getItem("saldo")) || 1000;
+    let historico = JSON.parse(localStorage.getItem("historico")) || [];
+    let saldoVisivel = false;
+
+    function atualizarInput() {
+      const op = document.getElementById("operacao").value;
+      document.getElementById("valor").disabled = op === "saldo";
+    }
+
+    function toggleSaldo() {
+      saldoVisivel = !saldoVisivel;
+      atualizarResultado();
+    }
+
+    function atualizarResultado(msg = "") {
+      const r = document.getElementById("resultado");
+      const op = document.getElementById("operacao").value;
+      if (op === "saldo") {
+        r.innerHTML = saldoVisivel
+          ? `💰 Saldo atual: R$ ${saldo.toFixed(2)}`
+          : "💰 Saldo atual: ******";
+        r.className = "success";
+        r.innerHTML += '<span class="eye" onclick="toggleSaldo()">👁️</span>';
+      } else {
+        r.textContent = msg;
+      }
+    }
+
+    function realizarOperacao() {
+      const op = document.getElementById("operacao").value;
+      const valor = parseFloat(document.getElementById("valor").value);
+      const r = document.getElementById("resultado");
+      r.className = "";
+
+      if (op === "saldo") return atualizarResultado();
+
+      if (isNaN(valor) || valor <= 0) {
+        r.textContent = "⚠️ Valor inválido.";
+        r.className = "error";
+        return;
+      }
+
+      const horario = new Date().toLocaleString();
+
+      if (op === "sacar") {
+        if (valor > saldo) {
+          r.textContent = "❌ Saldo insuficiente.";
+          r.className = "error";
+        } else {
+          saldo -= valor;
+          r.className = "success";
+          r.innerHTML = `
+            ✅ Saque de R$ ${valor.toFixed(2)} realizado.<br>
+            Saldo restante: <span id="sensitive-saldo">******</span>
+            <button onclick="mostrarSaldoRestante(this)" style="margin-left: 8px; background:#333; color:#00bfff; border:none; border-radius:4px; padding:2px 6px; font-size:12px; cursor:pointer;">👁️</button>
+          `;
+          historico.push(`[${horario}] Saque: R$ ${valor.toFixed(2)}`);
+        }
+      }
+
+      if (op === "depositar") {
+        saldo += valor;
+        r.textContent = `✅ Depósito de R$ ${valor.toFixed(2)} realizado. Saldo atual: ******`;
+        r.classList.add("success");
+        historico.push(`[${horario}] Depósito: R$ ${valor.toFixed(2)}`);
+      }
+
+      document.getElementById("valor").value = "";
+      localStorage.setItem("saldo", saldo);
+      localStorage.setItem("historico", JSON.stringify(historico));
+      atualizarHistorico();
+    }
+
+    function mostrarSaldoRestante(btn) {
+      const span = document.getElementById("sensitive-saldo");
+      if (span.textContent.includes("*")) {
+        span.textContent = `R$ ${saldo.toFixed(2)}`;
+        btn.textContent = "🙈";
+      } else {
+        span.textContent = "******";
+        btn.textContent = "👁️";
+      }
+    }
+
+    function atualizarHistorico() {
+      const h = document.getElementById("historico");
+      h.innerHTML = "<strong>📋 Histórico:</strong>";
+      historico.slice().reverse().forEach(e => h.innerHTML += `<p>${e}</p>`);
+    }
+
+    function resetarCaixa() {
+      if (confirm("Deseja resetar o caixa?")) {
+        saldo = 1000;
+        historico = [];
+        saldoVisivel = false;
+        localStorage.clear();
+        document.getElementById("valor").value = "";
+        document.getElementById("operacao").value = "saldo";
+        document.getElementById("valor").disabled = true;
+        const r = document.getElementById("resultado");
+        r.textContent = "Resultado da operação aparecerá aqui.";
+        r.className = "";
+        r.innerHTML += '<span class="eye" onclick="toggleSaldo()">👁️</span>';
+        atualizarHistorico();
+      }
+    }
+
+    function alternarModo() {
+      document.body.classList.toggle("dark-mode");
+      document.body.classList.toggle("light-mode");
+    }
+
+    window.onload = () => {
+      atualizarInput();
+      atualizarHistorico();
+    };
+  </script>
+</body>
+</html>
