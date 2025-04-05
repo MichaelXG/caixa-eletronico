@@ -21,8 +21,8 @@ Um projeto de simulação de operações bancárias (Consultar saldo, Saque e De
 ## 💡 Tecnologias Usadas
 
 - HTML5  
-- CSS3 (estilização moderna com responsividade)  
-- JavaScript Puro (sem bibliotecas externas)
+- CSS3  
+- JavaScript Puro (Vanilla JS)
 
 ---
 
@@ -57,24 +57,18 @@ Depois, acesse: [http://localhost:3000](http://localhost:3000)
 
 ## 📸 Preview
 
-> Adicione uma captura de tela aqui se desejar:
-
-```
-[📷 Imagem da interface do simulador]
-```
+![Tela do Simulador](./image.png)
 
 ---
 
 ## 📌 Observações
 
 - O saldo inicial é de **R$ 1000**.
-- O saldo e o histórico são salvos no **localStorage** e não se perdem ao recarregar a página.
-- O botão de **Resetar** limpa o histórico e o saldo.
+- O saldo e o histórico são salvos no `localStorage` e permanecem mesmo após atualizar a página.
+- O botão de **Resetar** limpa o histórico e redefine o saldo para o valor inicial.
 
 ---
 
 ## 👨‍💻 Autor
 
-Desenvolvido com 💙 por [Michael Xavier Gomes]
-
----
+Desenvolvido com 💙 por [Seu Nome]
